@@ -1,4 +1,5 @@
-import static org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+import static org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
+import dev.detekt.gradle.extensions.FailOnSeverity
 
 plugins {
     // Apply the java Plugin to add support for Java.
@@ -13,11 +14,11 @@ plugins {
     // Apply the kover Plugin to add support for code coverage in Java and Kotlin with Kover
     id 'org.jetbrains.kotlinx.kover'
 
-    // Apply the checkstyle Plugin to add support for code coverage in Java with Checkstyle
+    // Apply the checkstyle Plugin to add support for static code analysis in Java with Checkstyle
     id 'checkstyle'
 
-    // Apply the checkstyle Plugin to add support for code coverage in Java with Checkstyle
-    id 'io.gitlab.arturbosch.detekt'
+    // Apply the detekt Plugin to add support for static code analysis coverage in Kotlin
+    id 'dev.detekt'
 }
 
 def githubUser = project.findProperty("github.user") ?: System.getenv("GITHUB_USER")
@@ -26,14 +27,6 @@ def githubToken = project.findProperty("github.token") ?: System.getenv("GITHUB_
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-
-    maven {
-        url = uri("https://maven.pkg.github.com/austral-ingsis/chess-ui")
-        credentials {
-            username = githubUser
-            password = githubToken
-        }
-    }
 }
 
 dependencies {
@@ -46,18 +39,12 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // Chess test framework
-    testImplementation 'edu.austral.dissis.chess:test-framework:1.4.0'
-
-    implementation("edu.austral.dissis.chess:chess-ui:2.1.0")
-    implementation("edu.austral.dissis.chess:simple-client-server:1.2.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -69,7 +56,7 @@ kotlin {
                 // https://kotlinlang.org/docs/java-interop.html#compiler-configuration
                 '-Xjsr305=strict',
         ]
-        jvmTarget = JVM_21
+        jvmTarget = JVM_25
     }
 }
 
@@ -91,19 +78,16 @@ spotless {
 
 // Coverage configuration
 kover {
-    // JacocoEngine is used
-    useJacoco()
-}
-
-koverReport {
-    verify {
-        rule('Minimal line coverage rate') {
-            minBound(80)
+    reports {
+        verify {
+            rule {
+                minBound(80)
+            }
         }
-    }
-    defaults {
-        html {
-            onCheck = true
+        total {
+            html {
+                onCheck = true
+            }
         }
     }
 }
@@ -119,5 +103,7 @@ detekt {
     // Uses the default configuration and only overrides the configurations in "detekt-config.yaml"
     buildUponDefaultConfig = true
     config.from("${rootDir}/config/detekt-config.yaml")
+
+    failOnSeverity = FailOnSeverity.Warning
 }
 

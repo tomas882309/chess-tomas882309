@@ -1,16 +1,13 @@
-build:
-  maxIssues: 0
-
 complexity:
   LongParameterList:
-    functionThreshold: 10
-    constructorThreshold: 10
+    allowedFunctionParameters: 8
+    allowedConstructorParameters: 8
   TooManyFunctions:
-    thresholdInFiles: 15
-    thresholdInClasses: 15
-    thresholdInInterfaces: 15
-    thresholdInObjects: 15
-    thresholdInEnums: 15
+    allowedFunctionsPerFile: 10
+    allowedFunctionsPerClass: 10
+    allowedFunctionsPerInterface: 10
+    allowedFunctionsPerObject: 10
+    allowedFunctionsPerEnum: 10
 
 exceptions:
   TooGenericExceptionCaught:
