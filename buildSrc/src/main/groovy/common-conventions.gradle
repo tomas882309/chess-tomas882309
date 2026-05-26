@@ -27,6 +27,14 @@ def githubToken = project.findProperty("github.token") ?: System.getenv("GITHUB_
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+
+    maven {
+        url = uri("https://maven.pkg.github.com/austral-ingsis/chess-ui")
+        credentials {
+            username = githubUser
+            password = githubToken
+        }
+    }
 }
 
 dependencies {
@@ -39,6 +47,11 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Chess test framework
+    testImplementation 'edu.austral.dissis.chess:test-framework:1.4.0'
+
+    implementation("edu.austral.dissis.chess:chess-ui:4.0.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
