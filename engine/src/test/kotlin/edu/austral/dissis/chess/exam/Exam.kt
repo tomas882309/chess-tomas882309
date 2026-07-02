@@ -6,11 +6,6 @@ import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
 
 class Exam {
-
     @TestFactory
-    fun `required exam tests`(): Stream<DynamicTest> {
-
-        return GameTester(DummyTestGameRunner()).test()
-    }
-
+    fun `required exam tests`(): Stream<DynamicTest> = GameTester(DummyTestGameRunner.create()).test()
 }
