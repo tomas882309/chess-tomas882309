@@ -1,10 +1,7 @@
 package edu.austral.dissis.chess.model;
 
-public enum PieceType {
-  KING,
-  QUEEN,
-  ROOK,
-  BISHOP,
-  KNIGHT,
-  PAWN
+import edu.austral.dissis.common.model.PieceKind;
+
+public enum PieceType implements PieceKind {
+  KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
 }

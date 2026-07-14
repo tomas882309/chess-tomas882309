@@ -1,9 +1,10 @@
 package edu.austral.dissis.checkers.model;
 
+import edu.austral.dissis.common.model.GameExtra;
 import edu.austral.dissis.common.model.Position;
 import java.util.Optional;
 
-public record CheckersExtra(Optional<Position> multiJumpPosition) {
+public record CheckersExtra(Optional<Position> multiJumpPosition) implements GameExtra {
 
   public static CheckersExtra none() {
     return new CheckersExtra(Optional.empty());
