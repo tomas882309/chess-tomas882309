@@ -8,5 +8,10 @@ public enum PieceType implements PieceKind {
   ROOK,
   BISHOP,
   KNIGHT,
-  PAWN
+  PAWN;
+
+  @Override
+  public String pieceId() {
+    return name().toLowerCase();
+  }
 }

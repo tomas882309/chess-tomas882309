@@ -5,7 +5,7 @@ import edu.austral.dissis.chess.gui.CachedImageResolver
 import edu.austral.dissis.chess.gui.DefaultImageResolver
 import edu.austral.dissis.chess.gui.GameViewFactory
 import edu.austral.dissis.common.network.payload.GameStatePayload
-import edu.austral.dissis.common.network.payload.InitPayload
+import edu.austral.dissis.server.ClientRole
 import edu.austral.dissis.server.ServerConfig
 import edu.austral.ingsis.clientserver.Client
 import edu.austral.ingsis.clientserver.ClientConnectionListener
@@ -54,9 +54,9 @@ class ClientApplication : Application() {
                     },
                 ).addMessageListener(
                     "role",
-                    object : TypeReference<Message<String>>() {},
-                    object : MessageListener<String> {
-                        override fun handleMessage(message: Message<String>) {
+                    object : TypeReference<Message<ClientRole>>() {},
+                    object : MessageListener<ClientRole> {
+                        override fun handleMessage(message: Message<ClientRole>) {
                             engine.setRole(message.payload)
                         }
                     },

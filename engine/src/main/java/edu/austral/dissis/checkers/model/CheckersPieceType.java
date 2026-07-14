@@ -4,5 +4,10 @@ import edu.austral.dissis.common.model.PieceKind;
 
 public enum CheckersPieceType implements PieceKind {
   MAN,
-  KING
+  KING;
+
+  @Override
+  public String pieceId() {
+    return name().toLowerCase();
+  }
 }

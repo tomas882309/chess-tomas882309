@@ -115,7 +115,7 @@ class ServerGuiEngine(
                     id = posToStableId[key] ?: "p${idCounter++}",
                     color = if (piece.color() == Color.WHITE) PlayerColor.WHITE else PlayerColor.BLACK,
                     position = GuiPosition(pos.row() + 1, pos.col() + 1),
-                    pieceId = piece.type().toPieceId(),
+                    pieceId = piece.type().pieceId(),
                 )
             }
         val current =

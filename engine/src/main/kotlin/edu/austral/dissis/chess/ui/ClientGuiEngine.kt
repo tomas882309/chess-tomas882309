@@ -7,6 +7,7 @@ import edu.austral.dissis.chess.gui.PlayerColor
 import edu.austral.dissis.common.model.GameStatus
 import edu.austral.dissis.common.network.payload.GameStatePayload
 import edu.austral.dissis.common.network.payload.MovePayload
+import edu.austral.dissis.server.ClientRole
 import edu.austral.ingsis.clientserver.Client
 import edu.austral.ingsis.clientserver.Message
 import edu.austral.dissis.chess.gui.GameState as GuiGameState
@@ -17,7 +18,7 @@ class ClientGuiEngine {
     private var client: Client? = null
     private var idCounter = 0
     private val posToId: MutableMap<String, String> = mutableMapOf()
-    private var role: String = "SPECTATOR"
+    private var role: ClientRole = ClientRole.SPECTATOR
     private var currentGuiState: GuiGameState =
         GuiGameState.Playing(
             boardSize = BoardSize(8, 8),
@@ -27,7 +28,7 @@ class ClientGuiEngine {
             canRedo = false,
         )
 
-    fun setRole(role: String) {
+    fun setRole(role: ClientRole) {
         this.role = role
     }
 
@@ -90,7 +91,7 @@ class ClientGuiEngine {
 
     private fun handleMove(guiMove: GuiMove): GuiGameState {
         val state = currentGuiState
-        if (role != "BLACK" || state !is GuiGameState.Playing || state.currentPlayer != PlayerColor.BLACK) {
+        if (role != ClientRole.BLACK || state !is GuiGameState.Playing || state.currentPlayer != PlayerColor.BLACK) {
             return currentGuiState
         }
         client?.send(
