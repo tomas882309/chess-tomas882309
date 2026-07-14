@@ -37,12 +37,12 @@ class ClientGuiEngine {
     }
 
     fun onGameStateReceived(payload: GameStatePayload): GuiGameState {
-        val newKeys = payload.pieces.map { "${it.row}-${it.col}" }.toSet()
+        val newKeys = payload.pieces.map { "${it.row}-${it.col}-${it.color}-${it.pieceId}" }.toSet()
         posToId.keys.retainAll(newKeys)
 
         val pieces =
             payload.pieces.map { p ->
-                val key = "${p.row}-${p.col}"
+                val key = "${p.row}-${p.col}-${p.color}-${p.pieceId}"
                 val id = posToId.getOrPut(key) { "p${idCounter++}" }
                 ChessPiece(
                     id = id,
@@ -56,27 +56,16 @@ class ClientGuiEngine {
 
         currentGuiState =
             when (payload.status) {
-                GameStatus.WHITE_WINS.name -> {
-                    GuiGameState.GameOver(PlayerColor.WHITE)
-                }
-
-                GameStatus.BLACK_WINS.name -> {
-                    GuiGameState.GameOver(PlayerColor.BLACK)
-                }
-
-                GameStatus.DRAW.name -> {
-                    GuiGameState.GameOver(PlayerColor.WHITE)
-                }
-
-                else -> {
-                    GuiGameState.Playing(
-                        boardSize = BoardSize(payload.boardSize, payload.boardSize),
-                        pieces = pieces,
-                        currentPlayer = current,
-                        canUndo = false,
-                        canRedo = false,
-                    )
-                }
+                GameStatus.WHITE_WINS.name -> GuiGameState.GameOver(PlayerColor.WHITE)
+                GameStatus.BLACK_WINS.name -> GuiGameState.GameOver(PlayerColor.BLACK)
+                GameStatus.DRAW.name -> GuiGameState.GameOver(PlayerColor.WHITE)
+                else -> GuiGameState.Playing(
+                    boardSize = BoardSize(payload.boardSize, payload.boardSize),
+                    pieces = pieces,
+                    currentPlayer = current,
+                    canUndo = false,
+                    canRedo = false,
+                )
             }
         return currentGuiState
     }
