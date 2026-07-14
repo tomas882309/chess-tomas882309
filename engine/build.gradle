@@ -40,14 +40,9 @@ kover {
         filters {
             excludes {
                 classes(
-                        "edu.austral.dissis.chess.ui.MainKt",
                         "edu.austral.dissis.chess.ui.ChessGameApplication",
                         "edu.austral.dissis.chess.ui.ChessGameApplication*",
                         "edu.austral.dissis.chess.ui.ChessGuiEngine",
-                        "edu.austral.dissis.common.*",
-                        "edu.austral.dissis.chess.*",
-                        "edu.austral.dissis.checkers.*",
-                        "edu.austral.dissis.server.*",
                         "edu.austral.dissis.chess.ui.ServerMainKt",
                         "edu.austral.dissis.chess.ui.ServerApplication",
                         "edu.austral.dissis.chess.ui.ServerApplication*",
@@ -56,6 +51,7 @@ kover {
                         "edu.austral.dissis.chess.ui.ClientApplication",
                         "edu.austral.dissis.chess.ui.ClientApplication*",
                         "edu.austral.dissis.chess.ui.ClientGuiEngine",
+                        "edu.austral.dissis.server.*",
                 )
             }
         }

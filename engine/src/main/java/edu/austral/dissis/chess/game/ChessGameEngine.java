@@ -71,7 +71,23 @@ public class ChessGameEngine implements GameEngine {
       return detectCastling(move, piece);
     }
     if (piece.isType(PieceType.PAWN)) {
-      return detectEnPassant(move, state);
+      return detectPawnMove(move, piece, state);
+    }
+    return move;
+  }
+
+  private Move detectPawnMove(Move move, Piece piece, GameState state) {
+    Move withEnPassant = detectEnPassant(move, state);
+    if (withEnPassant != move) {
+      return withEnPassant;
+    }
+    return detectPromotion(move, piece);
+  }
+
+  private Move detectPromotion(Move move, Piece piece) {
+    int promotionRow = piece.color() == Color.WHITE ? 7 : 0;
+    if (move.to().row() == promotionRow) {
+      return ChessMove.promotion(move.from(), move.to(), PieceType.QUEEN);
     }
     return move;
   }

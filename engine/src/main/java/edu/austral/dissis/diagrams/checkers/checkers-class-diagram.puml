@@ -1,0 +1,72 @@
+@startuml checkers-class-diagram
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+
+interface GameEngine {
+  +executeMove(move, state): MoveResult
+}
+interface TurnManager {
+  +nextPlayer(color, state): Color
+}
+interface WinCondition {
+  +evaluate(state, move): GameStatus
+}
+interface MoveStrategy {
+  +isValidMove(move, piece, state): boolean
+}
+
+class Game {
+  +executeMove(move): MoveResult
+  +undo(): MoveResult
+  +redo(): MoveResult
+}
+class GameHistory
+class GameState {
+  +board: Board
+  +currentPlayer: Color
+  +status: GameStatus
+  +extra: GameExtra
+}
+class Board {
+  +pieces: Map<Position, Piece>
+}
+class Piece {
+  +color: Color
+  +type: PieceKind
+}
+
+class CheckersGameEngine implements GameEngine {
+  -moveValidator: CheckersMoveValidator
+  -winCondition: WinCondition
+  -turnManager: TurnManager
+  -boardUpdater: CheckersBoardUpdater
+}
+class CheckersExtra {
+  +multiJumpPosition: Optional<Position>
+  +isMultiJump(): boolean
+}
+enum CheckersPieceType {
+  MAN
+  KING
+}
+class CheckersMoveValidator
+class CheckersWinCondition implements WinCondition
+class StandardTurnManager implements TurnManager
+class CheckersManMoveStrategy implements MoveStrategy
+class CheckersKingMoveStrategy implements MoveStrategy
+class CheckersBoardUpdater
+class CheckersGameFactory {
+  +createStandardGame(): Game
+}
+
+Game --> GameEngine
+Game --> GameHistory
+GameHistory --> GameState
+GameState --> Board
+Board --> Piece
+CheckersGameEngine --> CheckersMoveValidator
+CheckersGameEngine --> CheckersBoardUpdater
+CheckersGameFactory ..> Game : creates
+CheckersGameFactory ..> CheckersGameEngine : creates
+
+@enduml

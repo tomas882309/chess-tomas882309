@@ -1,0 +1,30 @@
+@startuml chess-sequence-diagram
+
+actor Client
+participant GameServerState
+participant Game
+participant ChessGameEngine
+participant ChessMoveValidator
+participant BoardUpdater
+participant NextStateBuilder
+
+Client -> GameServerState : MovePayload(fromRow, fromCol, toRow, toCol)
+GameServerState -> Game : executeMove(move)
+Game -> ChessGameEngine : executeMove(move, state)
+
+ChessGameEngine -> ChessGameEngine : normalizeMove()\n(detecta castling,\nen passant, promotion)
+
+ChessGameEngine -> ChessMoveValidator : findViolation(move, state)
+ChessMoveValidator --> ChessGameEngine : Optional.empty()
+
+ChessGameEngine -> BoardUpdater : apply(move, state)
+BoardUpdater --> ChessGameEngine : newBoard
+
+ChessGameEngine -> NextStateBuilder : build(move, state, newBoard)
+NextStateBuilder --> ChessGameEngine : newState
+
+ChessGameEngine --> Game : MoveResult.Success(newState)
+Game --> GameServerState : MoveResult.Success(newState)
+GameServerState -> Client : broadcast GameStatePayload
+
+@enduml

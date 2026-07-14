@@ -1,0 +1,32 @@
+@startuml checkers-sequence-diagram
+
+actor Client
+participant GameServerState
+participant Game
+participant CheckersGameEngine
+participant CheckersMoveValidator
+participant CheckersBoardUpdater
+
+Client -> GameServerState : MovePayload(fromRow, fromCol, toRow, toCol)
+GameServerState -> Game : executeMove(move)
+Game -> CheckersGameEngine : executeMove(move, state)
+
+CheckersGameEngine -> CheckersMoveValidator : findViolation(move, state)
+note right : valida turno, dirección,\ncaptura obligatoria,\nmulti-jump
+CheckersMoveValidator --> CheckersGameEngine : Optional.empty()
+
+CheckersGameEngine -> CheckersBoardUpdater : apply(move, board, player)
+CheckersBoardUpdater --> CheckersGameEngine : newBoard
+
+alt captura y puede seguir saltando
+  CheckersGameEngine --> Game : MoveResult.Success\n(mismo jugador, CheckersExtra.multiJump)
+  Game --> GameServerState : MoveResult.Success
+  GameServerState -> Client : broadcast GameStatePayload
+  Client -> GameServerState : MovePayload (segundo salto)
+else fin de turno normal
+  CheckersGameEngine --> Game : MoveResult.Success\n(jugador alternado, CheckersExtra.none)
+  Game --> GameServerState : MoveResult.Success
+  GameServerState -> Client : broadcast GameStatePayload
+end
+
+@enduml

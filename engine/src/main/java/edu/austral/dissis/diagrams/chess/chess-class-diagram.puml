@@ -1,0 +1,74 @@
+@startuml chess-class-diagram
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+
+interface GameEngine {
+  +executeMove(move, state): MoveResult
+}
+interface TurnManager {
+  +nextPlayer(color, state): Color
+}
+interface WinCondition {
+  +evaluate(state, move): GameStatus
+}
+interface MoveStrategy {
+  +isValidMove(move, piece, state): boolean
+}
+
+class Game {
+  +executeMove(move): MoveResult
+  +undo(): MoveResult
+  +redo(): MoveResult
+}
+class GameHistory
+class GameState {
+  +board: Board
+  +currentPlayer: Color
+  +status: GameStatus
+  +extra: GameExtra
+}
+class Board {
+  +pieces: Map<Position, Piece>
+}
+class Piece {
+  +color: Color
+  +type: PieceKind
+}
+
+class ChessGameEngine implements GameEngine {
+  -moveValidator: ChessMoveValidator
+  -winCondition: WinCondition
+  -turnManager: TurnManager
+  -boardUpdater: BoardUpdater
+}
+class ChessExtra {
+  +castlingRights: CastlingRights
+  +enPassantTarget: Optional<Position>
+}
+enum PieceType {
+  KING, QUEEN, ROOK
+  BISHOP, KNIGHT, PAWN
+}
+class ChessMoveValidator
+class CheckmateWinCondition implements WinCondition
+class StandardTurnManager implements TurnManager
+class PawnMoveStrategy implements MoveStrategy
+class KingMoveStrategy implements MoveStrategy
+class BoardUpdater
+class NextStateBuilder
+class ChessGameFactory {
+  +createStandardGame(): Game
+}
+
+Game --> GameEngine
+Game --> GameHistory
+GameHistory --> GameState
+GameState --> Board
+Board --> Piece
+ChessGameEngine --> ChessMoveValidator
+ChessGameEngine --> BoardUpdater
+ChessGameEngine --> NextStateBuilder
+ChessGameFactory ..> Game : creates
+ChessGameFactory ..> ChessGameEngine : creates
+
+@enduml
