@@ -14,6 +14,9 @@ interface WinCondition {
 interface MoveStrategy {
   +isValidMove(move, piece, state): boolean
 }
+interface PieceKind {
+  +pieceId(): String
+}
 
 class Game {
   +executeMove(move): MoveResult
@@ -33,31 +36,49 @@ class Board {
 class Piece {
   +color: Color
   +type: PieceKind
+  +moveStrategy: MoveStrategy
 }
 
-class ChessGameEngine implements GameEngine {
-  -moveValidator: ChessMoveValidator
-  -winCondition: WinCondition
-  -turnManager: TurnManager
-  -boardUpdater: BoardUpdater
+package "model/pieces" {
+  class King implements PieceKind
+  class Queen implements PieceKind
+  class Rook implements PieceKind
+  class Bishop implements PieceKind
+  class Knight implements PieceKind
+  class Pawn implements PieceKind
 }
+
 class ChessExtra {
   +castlingRights: CastlingRights
   +enPassantTarget: Optional<Position>
 }
-enum PieceType {
-  KING, QUEEN, ROOK
-  BISHOP, KNIGHT, PAWN
+class ChessPieceFactory {
+  +king(color): Piece
+  +queen(color): Piece
+  +rook(color): Piece
+  +bishop(color): Piece
+  +knight(color): Piece
+  +pawn(color): Piece
 }
-class ChessMoveValidator
 class CheckmateWinCondition implements WinCondition
+class ExtinctionWinCondition implements WinCondition {
+  -requiredTypes: Set<PieceKind>
+}
 class StandardTurnManager implements TurnManager
+class ProgressiveTurnManager implements TurnManager
 class PawnMoveStrategy implements MoveStrategy
+class BerolinaPawnMoveStrategy implements MoveStrategy
 class KingMoveStrategy implements MoveStrategy
-class BoardUpdater
-class NextStateBuilder
+class ChessGameEngine implements GameEngine {
+  -moveValidator: ChessMoveValidator
+  -winCondition: WinCondition
+  -turnManager: TurnManager
+}
 class ChessGameFactory {
   +createStandardGame(): Game
+  +createExtinctionGame(): Game
+  +createProgressiveGame(): Game
+  +createBerlineseGame(): Game
 }
 
 Game --> GameEngine
@@ -65,10 +86,11 @@ Game --> GameHistory
 GameHistory --> GameState
 GameState --> Board
 Board --> Piece
-ChessGameEngine --> ChessMoveValidator
-ChessGameEngine --> BoardUpdater
-ChessGameEngine --> NextStateBuilder
+Piece --> PieceKind
+Piece --> MoveStrategy
+ChessGameEngine --> TurnManager
+ChessGameEngine --> WinCondition
 ChessGameFactory ..> Game : creates
-ChessGameFactory ..> ChessGameEngine : creates
+ChessPieceFactory ..> Piece : creates
 
 @enduml

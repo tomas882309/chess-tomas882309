@@ -1,11 +1,12 @@
 package edu.austral.dissis.chess.model;
 
 import edu.austral.dissis.common.model.Move;
+import edu.austral.dissis.common.model.PieceKind;
 import edu.austral.dissis.common.model.Position;
 import java.util.Optional;
 
 public record ChessMove(
-    Position from, Position to, ChessMoveType type, Optional<PieceType> promotionPiece)
+    Position from, Position to, ChessMoveType type, Optional<PieceKind> promotionPiece)
     implements Move {
 
   public static ChessMove standard(Position from, Position to) {
@@ -24,7 +25,7 @@ public record ChessMove(
     return new ChessMove(from, to, ChessMoveType.EN_PASSANT, Optional.empty());
   }
 
-  public static ChessMove promotion(Position from, Position to, PieceType piece) {
-    return new ChessMove(from, to, ChessMoveType.PROMOTION, Optional.of(piece));
+  public static ChessMove promotion(Position from, Position to) {
+    return new ChessMove(from, to, ChessMoveType.PROMOTION, Optional.empty());
   }
 }

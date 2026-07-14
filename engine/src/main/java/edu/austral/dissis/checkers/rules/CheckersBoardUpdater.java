@@ -1,7 +1,7 @@
 package edu.austral.dissis.checkers.rules;
 
 import edu.austral.dissis.checkers.factory.CheckersPieceFactory;
-import edu.austral.dissis.checkers.model.CheckersPieceType;
+import edu.austral.dissis.checkers.model.pieces.CheckersMan;
 import edu.austral.dissis.common.model.Board;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.Move;
@@ -40,11 +40,8 @@ public class CheckersBoardUpdater {
     }
     return board
         .pieceAt(to)
-        .filter(p -> p.isType(CheckersPieceType.MAN))
-        .map(
-            p ->
-                board.withPieceAt(
-                    to, CheckersPieceFactory.create(p.color(), CheckersPieceType.KING)))
+        .filter(p -> p.isType(CheckersMan.INSTANCE))
+        .map(p -> board.withPieceAt(to, CheckersPieceFactory.king(p.color())))
         .orElse(board);
   }
 

@@ -52,6 +52,9 @@ kover {
                         "edu.austral.dissis.chess.ui.ClientApplication*",
                         "edu.austral.dissis.chess.ui.ClientGuiEngine",
                         "edu.austral.dissis.server.*",
+
+                        "edu.austral.dissis.chess.rules.ExtinctionWinCondition",
+                        "edu.austral.dissis.chess.rules.ProgressiveTurnManager",
                 )
             }
         }

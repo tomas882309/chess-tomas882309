@@ -2,7 +2,9 @@ package edu.austral.dissis.chess.rules;
 
 import edu.austral.dissis.chess.model.CastlingRights;
 import edu.austral.dissis.chess.model.ChessExtra;
-import edu.austral.dissis.chess.model.PieceType;
+import edu.austral.dissis.chess.model.pieces.King;
+import edu.austral.dissis.chess.model.pieces.Pawn;
+import edu.austral.dissis.chess.model.pieces.Rook;
 import edu.austral.dissis.common.model.Board;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.GameState;
@@ -45,13 +47,20 @@ public class NextStateBuilder {
   }
 
   private CastlingRights revokeBasedOnPiece(Piece piece, Move move, CastlingRights rights) {
-    if (piece.isType(PieceType.KING)) {
+    if (piece.isType(King.INSTANCE)) {
       return rights.revokeAll(piece.color());
     }
-    if (piece.isType(PieceType.ROOK)) {
+    if (piece.isType(Rook.INSTANCE)) {
       return revokeRookSide(piece.color(), move.from(), rights);
     }
     return rights;
+  }
+
+  private Optional<Position> computeEnPassantTarget(Move move, Board board) {
+    return board
+        .pieceAt(move.from())
+        .filter(p -> p.isType(Pawn.INSTANCE) && Math.abs(move.to().row() - move.from().row()) == 2)
+        .map(p -> new Position((move.from().row() + move.to().row()) / 2, move.from().col()));
   }
 
   private CastlingRights revokeRookSide(Color color, Position from, CastlingRights rights) {
@@ -62,12 +71,5 @@ public class NextStateBuilder {
       return rights.revokeQueenside(color);
     }
     return rights;
-  }
-
-  private Optional<Position> computeEnPassantTarget(Move move, Board board) {
-    return board
-        .pieceAt(move.from())
-        .filter(p -> p.isType(PieceType.PAWN) && Math.abs(move.to().row() - move.from().row()) == 2)
-        .map(p -> new Position((move.from().row() + move.to().row()) / 2, move.from().col()));
   }
 }

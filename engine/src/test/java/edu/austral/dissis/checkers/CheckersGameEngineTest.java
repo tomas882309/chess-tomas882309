@@ -9,7 +9,7 @@ import edu.austral.dissis.checkers.factory.CheckersPieceFactory;
 import edu.austral.dissis.checkers.game.CheckersGameEngine;
 import edu.austral.dissis.checkers.model.CheckersExtra;
 import edu.austral.dissis.checkers.model.CheckersMove;
-import edu.austral.dissis.checkers.model.CheckersPieceType;
+import edu.austral.dissis.checkers.model.pieces.CheckersKing;
 import edu.austral.dissis.checkers.rules.CheckersBoardUpdater;
 import edu.austral.dissis.checkers.rules.CheckersMoveValidator;
 import edu.austral.dissis.checkers.rules.CheckersWinCondition;
@@ -46,11 +46,11 @@ class CheckersGameEngineTest {
   }
 
   private Piece man(Color color) {
-    return CheckersPieceFactory.create(color, CheckersPieceType.MAN);
+    return CheckersPieceFactory.man(color);
   }
 
   private Piece king(Color color) {
-    return CheckersPieceFactory.create(color, CheckersPieceType.KING);
+    return CheckersPieceFactory.king(color);
   }
 
   @Test
@@ -127,7 +127,7 @@ class CheckersGameEngineTest {
         (MoveResult.Success)
             game.executeMove(new CheckersMove(new Position(6, 2), new Position(7, 1)));
     Piece promoted = result.newState().board().pieceAt(new Position(7, 1)).get();
-    assertTrue(promoted.isType(CheckersPieceType.KING));
+    assertTrue(promoted.isType(CheckersKing.INSTANCE));
   }
 
   @Test

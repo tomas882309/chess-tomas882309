@@ -14,6 +14,9 @@ interface WinCondition {
 interface MoveStrategy {
   +isValidMove(move, piece, state): boolean
 }
+interface PieceKind {
+  +pieceId(): String
+}
 
 class Game {
   +executeMove(move): MoveResult
@@ -33,28 +36,31 @@ class Board {
 class Piece {
   +color: Color
   +type: PieceKind
+  +moveStrategy: MoveStrategy
 }
 
-class CheckersGameEngine implements GameEngine {
-  -moveValidator: CheckersMoveValidator
-  -winCondition: WinCondition
-  -turnManager: TurnManager
-  -boardUpdater: CheckersBoardUpdater
+package "model/pieces" {
+  class CheckersMan implements PieceKind
+  class CheckersKing implements PieceKind
 }
+
 class CheckersExtra {
   +multiJumpPosition: Optional<Position>
   +isMultiJump(): boolean
 }
-enum CheckersPieceType {
-  MAN
-  KING
+class CheckersPieceFactory {
+  +man(color): Piece
+  +king(color): Piece
 }
-class CheckersMoveValidator
 class CheckersWinCondition implements WinCondition
 class StandardTurnManager implements TurnManager
 class CheckersManMoveStrategy implements MoveStrategy
 class CheckersKingMoveStrategy implements MoveStrategy
-class CheckersBoardUpdater
+class CheckersGameEngine implements GameEngine {
+  -moveValidator: CheckersMoveValidator
+  -winCondition: WinCondition
+  -turnManager: TurnManager
+}
 class CheckersGameFactory {
   +createStandardGame(): Game
 }
@@ -64,9 +70,11 @@ Game --> GameHistory
 GameHistory --> GameState
 GameState --> Board
 Board --> Piece
-CheckersGameEngine --> CheckersMoveValidator
-CheckersGameEngine --> CheckersBoardUpdater
+Piece --> PieceKind
+Piece --> MoveStrategy
+CheckersGameEngine --> TurnManager
+CheckersGameEngine --> WinCondition
 CheckersGameFactory ..> Game : creates
-CheckersGameFactory ..> CheckersGameEngine : creates
+CheckersPieceFactory ..> Piece : creates
 
 @enduml

@@ -1,6 +1,5 @@
 package edu.austral.dissis.chess.ui
 
-import edu.austral.dissis.checkers.model.CheckersPieceType
 import edu.austral.dissis.chess.gui.BoardSize
 import edu.austral.dissis.chess.gui.ChessPiece
 import edu.austral.dissis.chess.gui.GameInputEvent
@@ -12,7 +11,6 @@ import edu.austral.dissis.server.GameServerState
 import edu.austral.dissis.chess.gui.GameState as GuiGameState
 import edu.austral.dissis.chess.gui.Move as GuiMove
 import edu.austral.dissis.chess.gui.Position as GuiPosition
-import edu.austral.dissis.chess.model.PieceType as ChessPieceType
 import edu.austral.dissis.common.model.Position as EnginePosition
 
 class ServerGuiEngine(
@@ -156,29 +154,4 @@ class ServerGuiEngine(
     ) = "$row-$col"
 
     private fun GuiPosition.toEnginePosition() = EnginePosition(row - 1, column - 1)
-
-    private fun Any.toPieceId(): String =
-        when (this) {
-            is ChessPieceType -> {
-                when (this) {
-                    ChessPieceType.KING -> "king"
-                    ChessPieceType.QUEEN -> "queen"
-                    ChessPieceType.ROOK -> "rook"
-                    ChessPieceType.BISHOP -> "bishop"
-                    ChessPieceType.KNIGHT -> "knight"
-                    ChessPieceType.PAWN -> "pawn"
-                }
-            }
-
-            is CheckersPieceType -> {
-                when (this) {
-                    CheckersPieceType.MAN -> "man"
-                    CheckersPieceType.KING -> "king"
-                }
-            }
-
-            else -> {
-                "pawn"
-            }
-        }
 }

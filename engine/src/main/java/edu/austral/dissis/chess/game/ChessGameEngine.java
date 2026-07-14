@@ -3,7 +3,8 @@ package edu.austral.dissis.chess.game;
 import edu.austral.dissis.chess.model.ChessExtra;
 import edu.austral.dissis.chess.model.ChessMove;
 import edu.austral.dissis.chess.model.ChessMoveType;
-import edu.austral.dissis.chess.model.PieceType;
+import edu.austral.dissis.chess.model.pieces.King;
+import edu.austral.dissis.chess.model.pieces.Pawn;
 import edu.austral.dissis.chess.rules.BoardUpdater;
 import edu.austral.dissis.chess.rules.NextStateBuilder;
 import edu.austral.dissis.common.game.GameEngine;
@@ -67,10 +68,10 @@ public class ChessGameEngine implements GameEngine {
   }
 
   private Move normalizeByPieceType(Move move, Piece piece, GameState state) {
-    if (piece.isType(PieceType.KING)) {
+    if (piece.isType(King.INSTANCE)) {
       return detectCastling(move, piece);
     }
-    if (piece.isType(PieceType.PAWN)) {
+    if (piece.isType(Pawn.INSTANCE)) {
       return detectPawnMove(move, piece, state);
     }
     return move;
@@ -87,7 +88,7 @@ public class ChessGameEngine implements GameEngine {
   private Move detectPromotion(Move move, Piece piece) {
     int promotionRow = piece.color() == Color.WHITE ? 7 : 0;
     if (move.to().row() == promotionRow) {
-      return ChessMove.promotion(move.from(), move.to(), PieceType.QUEEN);
+      return ChessMove.promotion(move.from(), move.to());
     }
     return move;
   }

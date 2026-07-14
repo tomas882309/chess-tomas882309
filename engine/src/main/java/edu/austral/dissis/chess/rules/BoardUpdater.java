@@ -2,12 +2,10 @@ package edu.austral.dissis.chess.rules;
 
 import edu.austral.dissis.chess.factory.ChessPieceFactory;
 import edu.austral.dissis.chess.model.ChessMove;
-import edu.austral.dissis.chess.model.PieceType;
 import edu.austral.dissis.common.model.Board;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.GameState;
 import edu.austral.dissis.common.model.Move;
-import edu.austral.dissis.common.model.Piece;
 import edu.austral.dissis.common.model.Position;
 
 public class BoardUpdater {
@@ -45,9 +43,7 @@ public class BoardUpdater {
   }
 
   private Board applyPromotion(ChessMove move, Board board) {
-    PieceType promotedType = move.promotionPiece().orElse(PieceType.QUEEN);
-    Piece promoted =
-        ChessPieceFactory.create(board.pieceAt(move.from()).orElseThrow().color(), promotedType);
-    return board.withoutPieceAt(move.from()).withPieceAt(move.to(), promoted);
+    Color color = board.pieceAt(move.from()).orElseThrow().color();
+    return board.withoutPieceAt(move.from()).withPieceAt(move.to(), ChessPieceFactory.queen(color));
   }
 }

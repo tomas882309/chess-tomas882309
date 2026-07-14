@@ -1,6 +1,8 @@
 package edu.austral.dissis.chess.rules;
 
 import edu.austral.dissis.chess.model.ChessMove;
+import edu.austral.dissis.chess.model.pieces.King;
+import edu.austral.dissis.chess.model.pieces.Pawn;
 import edu.austral.dissis.common.model.Board;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.GameState;
@@ -40,17 +42,13 @@ public class KingInCheckDetector {
     if (board.pieceAt(pos).isPresent()) {
       return board;
     }
-    Piece dummy =
-        new Piece(allyColor, edu.austral.dissis.chess.model.PieceType.PAWN, (m, p, s) -> false);
+    Piece dummy = new Piece(allyColor, Pawn.INSTANCE, (m, p, s) -> false);
     return board.withPieceAt(pos, dummy);
   }
 
   private Position findKingPosition(Color color, Board board) {
     return board.pieces().entrySet().stream()
-        .filter(
-            e ->
-                e.getValue().isColor(color)
-                    && e.getValue().isType(edu.austral.dissis.chess.model.PieceType.KING))
+        .filter(e -> e.getValue().isColor(color) && e.getValue().isType(King.INSTANCE))
         .map(Map.Entry::getKey)
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("King not found for " + color));

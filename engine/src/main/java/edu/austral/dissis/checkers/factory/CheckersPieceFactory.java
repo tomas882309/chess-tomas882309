@@ -1,22 +1,19 @@
 package edu.austral.dissis.checkers.factory;
 
-import edu.austral.dissis.checkers.model.CheckersPieceType;
+import edu.austral.dissis.checkers.model.pieces.CheckersKing;
+import edu.austral.dissis.checkers.model.pieces.CheckersMan;
 import edu.austral.dissis.checkers.strategy.CheckersKingMoveStrategy;
 import edu.austral.dissis.checkers.strategy.CheckersManMoveStrategy;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.Piece;
-import edu.austral.dissis.common.rules.MoveStrategy;
 
 public class CheckersPieceFactory {
 
-  public static Piece create(Color color, CheckersPieceType type) {
-    return new Piece(color, type, strategyFor(type));
+  public static Piece man(Color color) {
+    return new Piece(color, CheckersMan.INSTANCE, new CheckersManMoveStrategy());
   }
 
-  private static MoveStrategy strategyFor(CheckersPieceType type) {
-    return switch (type) {
-      case MAN -> new CheckersManMoveStrategy();
-      case KING -> new CheckersKingMoveStrategy();
-    };
+  public static Piece king(Color color) {
+    return new Piece(color, CheckersKing.INSTANCE, new CheckersKingMoveStrategy());
   }
 }

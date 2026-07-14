@@ -2,7 +2,6 @@ package edu.austral.dissis.checkers.factory;
 
 import edu.austral.dissis.checkers.game.CheckersGameEngine;
 import edu.austral.dissis.checkers.model.CheckersExtra;
-import edu.austral.dissis.checkers.model.CheckersPieceType;
 import edu.austral.dissis.checkers.rules.CheckersBoardUpdater;
 import edu.austral.dissis.checkers.rules.CheckersMoveValidator;
 import edu.austral.dissis.checkers.rules.CheckersWinCondition;
@@ -47,8 +46,7 @@ public class CheckersGameFactory {
   private static void placePiecesOnDarkSquares(Map<Position, Piece> pieces, int row, Color color) {
     for (int col = 0; col < 8; col++) {
       if ((row + col) % 2 == 1) {
-        pieces.put(
-            new Position(row, col), CheckersPieceFactory.create(color, CheckersPieceType.MAN));
+        pieces.put(new Position(row, col), CheckersPieceFactory.man(color));
       }
     }
   }

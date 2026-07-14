@@ -4,6 +4,12 @@ import edu.austral.dissis.chess.factory.ChessGameFactory
 import edu.austral.dissis.chess.factory.ChessPieceFactory
 import edu.austral.dissis.chess.model.CastlingRights
 import edu.austral.dissis.chess.model.ChessMove
+import edu.austral.dissis.chess.model.pieces.Bishop
+import edu.austral.dissis.chess.model.pieces.King
+import edu.austral.dissis.chess.model.pieces.Knight
+import edu.austral.dissis.chess.model.pieces.Pawn
+import edu.austral.dissis.chess.model.pieces.Queen
+import edu.austral.dissis.chess.model.pieces.Rook
 import edu.austral.dissis.chess.test.TestBoard
 import edu.austral.dissis.chess.test.TestPiece
 import edu.austral.dissis.chess.test.TestPieceSymbols
@@ -22,8 +28,8 @@ import edu.austral.dissis.common.model.Color
 import edu.austral.dissis.common.model.GameStatus
 import edu.austral.dissis.common.model.MoveResult
 import edu.austral.dissis.common.model.Piece
+import edu.austral.dissis.common.model.PieceKind
 import edu.austral.dissis.common.model.Position
-import edu.austral.dissis.chess.model.PieceType as ChessPieceType
 
 class DummyTestGameRunner(
     private val game: Game,
@@ -95,33 +101,31 @@ class DummyTestGameRunner(
 
     private fun Piece.toTestPiece() =
         TestPiece(
-            (type() as ChessPieceType).toSymbol(),
+            kindToSymbol(type()),
             if (color() == Color.WHITE) TestPieceSymbols.WHITE else TestPieceSymbols.BLACK,
         )
 
+    private fun kindToSymbol(kind: PieceKind): Char =
+        when (kind) {
+            is King -> TestPieceSymbols.KING
+            is Queen -> TestPieceSymbols.QUEEN
+            is Rook -> TestPieceSymbols.ROOK
+            is Bishop -> TestPieceSymbols.BISHOP
+            is Knight -> TestPieceSymbols.KNIGHT
+            else -> TestPieceSymbols.PAWN
+        }
+
     private fun TestPiece.toEnginePiece(): Piece {
         val color = if (playerColorSymbol == TestPieceSymbols.WHITE) Color.WHITE else Color.BLACK
-        val type =
-            when (pieceTypeSymbol) {
-                TestPieceSymbols.KING -> ChessPieceType.KING
-                TestPieceSymbols.QUEEN -> ChessPieceType.QUEEN
-                TestPieceSymbols.ROOK -> ChessPieceType.ROOK
-                TestPieceSymbols.BISHOP -> ChessPieceType.BISHOP
-                TestPieceSymbols.KNIGHT -> ChessPieceType.KNIGHT
-                else -> ChessPieceType.PAWN
-            }
-        return ChessPieceFactory.create(color, type)
-    }
-
-    private fun ChessPieceType.toSymbol(): Char =
-        when (this) {
-            ChessPieceType.KING -> TestPieceSymbols.KING
-            ChessPieceType.QUEEN -> TestPieceSymbols.QUEEN
-            ChessPieceType.ROOK -> TestPieceSymbols.ROOK
-            ChessPieceType.BISHOP -> TestPieceSymbols.BISHOP
-            ChessPieceType.KNIGHT -> TestPieceSymbols.KNIGHT
-            ChessPieceType.PAWN -> TestPieceSymbols.PAWN
+        return when (pieceTypeSymbol) {
+            TestPieceSymbols.KING -> ChessPieceFactory.king(color)
+            TestPieceSymbols.QUEEN -> ChessPieceFactory.queen(color)
+            TestPieceSymbols.ROOK -> ChessPieceFactory.rook(color)
+            TestPieceSymbols.BISHOP -> ChessPieceFactory.bishop(color)
+            TestPieceSymbols.KNIGHT -> ChessPieceFactory.knight(color)
+            else -> ChessPieceFactory.pawn(color)
         }
+    }
 
     private fun inferCastlingRights(board: Board): CastlingRights {
         val wK = hasKingAt(board, Color.WHITE, 0, 4) && hasRookAt(board, Color.WHITE, 0, 7)
@@ -136,12 +140,18 @@ class DummyTestGameRunner(
         color: Color,
         row: Int,
         col: Int,
-    ) = board.pieceAt(Position(row, col)).map { it.isColor(color) && it.isType(ChessPieceType.KING) }.orElse(false)
+    ) = board
+        .pieceAt(Position(row, col))
+        .map { it.isColor(color) && it.isType(King.INSTANCE) }
+        .orElse(false)
 
     private fun hasRookAt(
         board: Board,
         color: Color,
         row: Int,
         col: Int,
-    ) = board.pieceAt(Position(row, col)).map { it.isColor(color) && it.isType(ChessPieceType.ROOK) }.orElse(false)
+    ) = board
+        .pieceAt(Position(row, col))
+        .map { it.isColor(color) && it.isType(Rook.INSTANCE) }
+        .orElse(false)
 }
