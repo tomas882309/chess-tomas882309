@@ -3,9 +3,21 @@ plugins {
     id("org.openjfx.javafxplugin").version("0.1.0")
 }
 
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/austral-ingsis/simple-client-server")
+        credentials {
+            username = project.findProperty("github.user") ?: System.getenv("GITHUB_USER")
+            password = project.findProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
+}
+
 dependencies {
     implementation 'org.apache.commons:commons-text'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.8'
+    implementation 'edu.austral.dissis.chess:simple-client-server:1.2.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 }
 
 javafx {
@@ -35,6 +47,15 @@ kover {
                         "edu.austral.dissis.common.*",
                         "edu.austral.dissis.chess.*",
                         "edu.austral.dissis.checkers.*",
+                        "edu.austral.dissis.server.*",
+                        "edu.austral.dissis.chess.ui.ServerMainKt",
+                        "edu.austral.dissis.chess.ui.ServerApplication",
+                        "edu.austral.dissis.chess.ui.ServerApplication*",
+                        "edu.austral.dissis.chess.ui.ServerGuiEngine",
+                        "edu.austral.dissis.chess.ui.ClientMainKt",
+                        "edu.austral.dissis.chess.ui.ClientApplication",
+                        "edu.austral.dissis.chess.ui.ClientApplication*",
+                        "edu.austral.dissis.chess.ui.ClientGuiEngine",
                 )
             }
         }
