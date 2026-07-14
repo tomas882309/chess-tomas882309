@@ -1,6 +1,6 @@
 package edu.austral.dissis.chess.factory;
 
-import edu.austral.dissis.chess.game.ChessGame;
+import edu.austral.dissis.chess.game.ChessGameEngine;
 import edu.austral.dissis.chess.model.CastlingRights;
 import edu.austral.dissis.chess.model.ChessExtra;
 import edu.austral.dissis.chess.model.PieceType;
@@ -8,6 +8,7 @@ import edu.austral.dissis.chess.rules.BoardUpdater;
 import edu.austral.dissis.chess.rules.CheckmateWinCondition;
 import edu.austral.dissis.chess.rules.ChessMoveValidator;
 import edu.austral.dissis.chess.rules.NextStateBuilder;
+import edu.austral.dissis.common.game.Game;
 import edu.austral.dissis.common.model.Board;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.GameState;
@@ -17,6 +18,7 @@ import edu.austral.dissis.common.model.Position;
 import edu.austral.dissis.common.rules.StandardTurnManager;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ChessGameFactory {
 
@@ -25,29 +27,26 @@ public class ChessGameFactory {
     PieceType.KING, PieceType.BISHOP, PieceType.KNIGHT, PieceType.ROOK
   };
 
-  public static ChessGame createStandardGame() {
+  public static Game createStandardGame() {
     Board board = buildInitialBoard();
     GameState state =
         new GameState(board, Color.WHITE, GameStatus.IN_PROGRESS, ChessExtra.initial());
-    return new ChessGame(
-        state,
-        new ChessMoveValidator(),
-        new CheckmateWinCondition(),
-        new StandardTurnManager(),
-        new BoardUpdater(),
-        new NextStateBuilder());
+    return new Game(createEngine(), state);
   }
 
-  public static ChessGame createFromBoard(
+  public static Game createFromBoard(
       Board board, Color currentPlayer, CastlingRights castlingRights) {
     GameState state =
         new GameState(
             board,
             currentPlayer,
             GameStatus.IN_PROGRESS,
-            new ChessExtra(castlingRights, java.util.Optional.empty()));
-    return new ChessGame(
-        state,
+            new ChessExtra(castlingRights, Optional.empty()));
+    return new Game(createEngine(), state);
+  }
+
+  private static ChessGameEngine createEngine() {
+    return new ChessGameEngine(
         new ChessMoveValidator(),
         new CheckmateWinCondition(),
         new StandardTurnManager(),

@@ -1,11 +1,12 @@
 package edu.austral.dissis.checkers.factory;
 
-import edu.austral.dissis.checkers.game.CheckersGame;
+import edu.austral.dissis.checkers.game.CheckersGameEngine;
 import edu.austral.dissis.checkers.model.CheckersExtra;
 import edu.austral.dissis.checkers.model.CheckersPieceType;
 import edu.austral.dissis.checkers.rules.CheckersBoardUpdater;
 import edu.austral.dissis.checkers.rules.CheckersMoveValidator;
 import edu.austral.dissis.checkers.rules.CheckersWinCondition;
+import edu.austral.dissis.common.game.Game;
 import edu.austral.dissis.common.model.Board;
 import edu.austral.dissis.common.model.Color;
 import edu.austral.dissis.common.model.GameState;
@@ -18,16 +19,18 @@ import java.util.Map;
 
 public class CheckersGameFactory {
 
-  public static CheckersGame createStandardGame() {
+  public static Game createStandardGame() {
     Board board = buildInitialBoard();
     GameState state =
         new GameState(board, Color.WHITE, GameStatus.IN_PROGRESS, CheckersExtra.none());
-    return new CheckersGame(
-        state,
-        new CheckersMoveValidator(),
-        new CheckersWinCondition(),
-        new StandardTurnManager(),
-        new CheckersBoardUpdater());
+    CheckersMoveValidator validator = new CheckersMoveValidator();
+    CheckersGameEngine engine =
+        new CheckersGameEngine(
+            validator,
+            new CheckersWinCondition(),
+            new StandardTurnManager(),
+            new CheckersBoardUpdater());
+    return new Game(engine, state);
   }
 
   private static Board buildInitialBoard() {

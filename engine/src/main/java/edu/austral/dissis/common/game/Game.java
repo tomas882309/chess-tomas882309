@@ -3,68 +3,48 @@ package edu.austral.dissis.common.game;
 import edu.austral.dissis.common.model.GameState;
 import edu.austral.dissis.common.model.Move;
 import edu.austral.dissis.common.model.MoveResult;
-import edu.austral.dissis.common.rules.MoveValidator;
-import edu.austral.dissis.common.rules.TurnManager;
-import edu.austral.dissis.common.rules.WinCondition;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
-public abstract class Game {
+public class Game {
 
-  private GameState state;
-  private final Deque<GameState> history = new ArrayDeque<>();
-  private final Deque<GameState> redoStack = new ArrayDeque<>();
+  private final GameEngine engine;
+  private final GameHistory history;
 
-  protected final MoveValidator moveValidator;
-  protected final WinCondition winCondition;
-  protected final TurnManager turnManager;
-
-  protected Game(
-      GameState initialState,
-      MoveValidator moveValidator,
-      WinCondition winCondition,
-      TurnManager turnManager) {
-    this.state = initialState;
-    this.moveValidator = moveValidator;
-    this.winCondition = winCondition;
-    this.turnManager = turnManager;
+  public Game(GameEngine engine, GameState initialState) {
+    this.engine = engine;
+    this.history = new GameHistory(initialState);
   }
 
-  public abstract MoveResult executeMove(Move move);
+  public MoveResult executeMove(Move move) {
+    MoveResult result = engine.executeMove(move, history.current());
+    if (result instanceof MoveResult.Success s) {
+      history.commit(s.newState());
+    }
+    return result;
+  }
 
   public MoveResult undo() {
-    if (history.isEmpty()) {
-      return new MoveResult.Failure("No hay movimientos para deshacer");
-    }
-    redoStack.push(state);
-    state = history.pop();
-    return new MoveResult.Success(state);
+    return history
+        .undo()
+        .map(state -> (MoveResult) new MoveResult.Success(state))
+        .orElse(new MoveResult.Failure("No hay movimientos para deshacer"));
   }
 
   public MoveResult redo() {
-    if (redoStack.isEmpty()) {
-      return new MoveResult.Failure("No hay movimientos para rehacer");
-    }
-    history.push(state);
-    state = redoStack.pop();
-    return new MoveResult.Success(state);
+    return history
+        .redo()
+        .map(state -> (MoveResult) new MoveResult.Success(state))
+        .orElse(new MoveResult.Failure("No hay movimientos para rehacer"));
   }
 
   public GameState currentState() {
-    return state;
+    return history.current();
   }
 
   public boolean canUndo() {
-    return !history.isEmpty();
+    return history.canUndo();
   }
 
   public boolean canRedo() {
-    return !redoStack.isEmpty();
-  }
-
-  protected void commitState(GameState newState) {
-    history.push(state);
-    redoStack.clear();
-    state = newState;
+    return history.canRedo();
   }
 }

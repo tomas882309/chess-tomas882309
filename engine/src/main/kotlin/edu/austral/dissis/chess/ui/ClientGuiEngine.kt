@@ -89,9 +89,10 @@ class ClientGuiEngine {
         }
 
     private fun handleMove(guiMove: GuiMove): GuiGameState {
-        if (role != "BLACK") return currentGuiState
         val state = currentGuiState
-        if (state !is GuiGameState.Playing || state.currentPlayer != PlayerColor.BLACK) return currentGuiState
+        if (role != "BLACK" || state !is GuiGameState.Playing || state.currentPlayer != PlayerColor.BLACK) {
+            return currentGuiState
+        }
         client?.send(
             Message(
                 "move",
@@ -101,7 +102,7 @@ class ClientGuiEngine {
                     guiMove.to.row - 1,
                     guiMove.to.column - 1,
                 ),
-            )
+            ),
         )
         return currentGuiState
     }

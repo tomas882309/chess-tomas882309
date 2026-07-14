@@ -12,9 +12,15 @@ public class CheckersKingMoveStrategy implements MoveStrategy {
   public boolean isValidMove(Move move, Piece piece, GameState state) {
     int dr = move.to().row() - move.from().row();
     int dc = move.to().col() - move.from().col();
-    if (Math.abs(dr) != Math.abs(dc) || dr == 0) return false;
-    if (!state.board().isWithinBounds(move.to())) return false;
-    if (state.board().pieceAt(move.to()).isPresent()) return false;
+    if (Math.abs(dr) != Math.abs(dc) || dr == 0) {
+      return false;
+    }
+    if (!state.board().isWithinBounds(move.to())) {
+      return false;
+    }
+    if (state.board().pieceAt(move.to()).isPresent()) {
+      return false;
+    }
     return isPathValid(move, piece, state, Integer.signum(dr), Integer.signum(dc));
   }
 
@@ -24,19 +30,37 @@ public class CheckersKingMoveStrategy implements MoveStrategy {
     for (int i = 1; i < dist; i++) {
       Position cur = move.from().offset(i * stepR, i * stepC);
       var result = evaluateSquare(cur, piece, state, foundOpponent);
-      if (result == SquareResult.BLOCKED) return false;
-      if (result == SquareResult.OPPONENT) foundOpponent = true;
+      if (result == SquareResult.BLOCKED) {
+        return false;
+      }
+      if (result == SquareResult.OPPONENT) {
+        foundOpponent = true;
+      }
     }
     return true;
   }
 
-  private SquareResult evaluateSquare(Position pos, Piece piece, GameState state, boolean alreadyFoundOpponent) {
-    return state.board().pieceAt(pos).map(p -> {
-      if (p.isColor(piece.color())) return SquareResult.BLOCKED;
-      if (alreadyFoundOpponent) return SquareResult.BLOCKED;
-      return SquareResult.OPPONENT;
-    }).orElse(SquareResult.EMPTY);
+  private SquareResult evaluateSquare(
+      Position pos, Piece piece, GameState state, boolean alreadyFoundOpponent) {
+    return state
+        .board()
+        .pieceAt(pos)
+        .map(
+            p -> {
+              if (p.isColor(piece.color())) {
+                return SquareResult.BLOCKED;
+              }
+              if (alreadyFoundOpponent) {
+                return SquareResult.BLOCKED;
+              }
+              return SquareResult.OPPONENT;
+            })
+        .orElse(SquareResult.EMPTY);
   }
 
-  private enum SquareResult { EMPTY, OPPONENT, BLOCKED }
+  private enum SquareResult {
+    EMPTY,
+    OPPONENT,
+    BLOCKED
+  }
 }
