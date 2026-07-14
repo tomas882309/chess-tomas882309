@@ -13,21 +13,24 @@ import edu.austral.dissis.common.model.GameStatus;
 import edu.austral.dissis.common.model.Piece;
 import edu.austral.dissis.common.model.Position;
 import edu.austral.dissis.common.rules.StandardTurnManager;
+import edu.austral.dissis.common.rules.TurnManager;
+import edu.austral.dissis.common.rules.WinCondition;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class CheckersGameFactory {
 
   public static Game createStandardGame() {
-    Board board = buildInitialBoard();
-    GameState state =
-        new GameState(board, Color.WHITE, GameStatus.IN_PROGRESS, CheckersExtra.none());
-    CheckersMoveValidator validator = new CheckersMoveValidator();
-    CheckersGameEngine engine =
-        new CheckersGameEngine(
-            validator,
-            new CheckersWinCondition(),
-            new StandardTurnManager(),
+    return buildGame(buildInitialBoard(), new StandardTurnManager(), new CheckersWinCondition());
+  }
+
+  private static Game buildGame(Board board, TurnManager turnManager, WinCondition winCondition) {
+    GameState state = new GameState(board, Color.WHITE, GameStatus.IN_PROGRESS, CheckersExtra.none());
+    CheckersGameEngine engine = new CheckersGameEngine(
+            new CheckersMoveValidator(),
+            winCondition,
+            turnManager,
             new CheckersBoardUpdater());
     return new Game(engine, state);
   }
