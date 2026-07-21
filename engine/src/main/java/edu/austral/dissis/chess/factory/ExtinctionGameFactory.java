@@ -52,4 +52,27 @@ public class ExtinctionGameFactory {
         );
         return new Game(engine, initialState, List.of(), List.of());
     }
+
+    public static Game createFromBoard(Board board, Color currentPlayer) {
+        MoveValidator validator = new CompositeValidator(List.of(
+                new PieceExistsValidator(),
+                new CorrectTurnValidator(),
+                new DestinationInBoundsValidator(),
+                new BehaviourValidator(),
+                new CastlingValidator(),
+                new KingInCheckValidator()
+        ));
+        GameEngineImpl engine = new GameEngineImpl(
+                validator,
+                new ExtinctionWinCondition(),
+                new StandardTurnManager(),
+                new BoardUpdater(List.of(new EnPassantBoardEffect(), new CastlingBoardEffect(), new PromotionBoardEffect()))
+        );
+        GameExtraState extraState = new CompositeExtraState(List.of(
+                new EnPassantExtraState(Optional.empty()),
+                new CastlingExtraState(new CastlingRights(false, false, false, false))
+        ));
+        GameState state = new GameState(board, currentPlayer, GameStatus.IN_PROGRESS, extraState);
+        return new Game(engine, state, List.of(), List.of());
+    }
 }
