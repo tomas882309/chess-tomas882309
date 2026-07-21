@@ -9,26 +9,28 @@ interface TurnManager {
   +nextPlayer(color, state): Color
 }
 interface WinCondition {
-  +evaluate(state, move): GameStatus
+  +evaluate(state): GameStatus
 }
-interface MoveStrategy {
+interface MoveBehaviour {
   +isValidMove(move, piece, state): boolean
 }
 interface PieceKind {
   +pieceId(): String
 }
+interface GameExtraState {
+  +update(move, state): GameExtraState
+}
 
 class Game {
-  +executeMove(move): MoveResult
-  +undo(): MoveResult
-  +redo(): MoveResult
+  +executeMove(move): GameResult
+  +undo(): Game
+  +redo(): Game
 }
-class GameHistory
 class GameState {
   +board: Board
   +currentPlayer: Color
   +status: GameStatus
-  +extra: GameExtra
+  +extraState: GameExtraState
 }
 class Board {
   +pieces: Map<Position, Piece>
@@ -36,10 +38,10 @@ class Board {
 class Piece {
   +color: Color
   +type: PieceKind
-  +moveStrategy: MoveStrategy
+  +moveBehaviour: MoveBehaviour
 }
 
-package "model/pieces" {
+package "chess/model/pieces" {
   class King implements PieceKind
   class Queen implements PieceKind
   class Rook implements PieceKind
@@ -48,10 +50,12 @@ package "model/pieces" {
   class Pawn implements PieceKind
 }
 
-class ChessExtra {
-  +castlingRights: CastlingRights
-  +enPassantTarget: Optional<Position>
+class CompositeExtraState implements GameExtraState {
+  +states: List<GameExtraState>
 }
+class EnPassantExtraState implements GameExtraState
+class CastlingExtraState implements GameExtraState
+
 class ChessPieceFactory {
   +king(color): Piece
   +queen(color): Piece
@@ -61,35 +65,27 @@ class ChessPieceFactory {
   +pawn(color): Piece
 }
 class CheckmateWinCondition implements WinCondition
-class ExtinctionWinCondition implements WinCondition {
-  -requiredTypes: Set<PieceKind>
-}
 class StandardTurnManager implements TurnManager
-class ProgressiveTurnManager implements TurnManager
-class PawnMoveStrategy implements MoveStrategy
-class BerolinaPawnMoveStrategy implements MoveStrategy
-class KingMoveStrategy implements MoveStrategy
-class ChessGameEngine implements GameEngine {
-  -moveValidator: ChessMoveValidator
+class GameEngineImpl implements GameEngine {
+  -moveValidator: MoveValidator
   -winCondition: WinCondition
   -turnManager: TurnManager
+  -boardUpdater: BoardUpdater
 }
 class ChessGameFactory {
   +createStandardGame(): Game
-  +createExtinctionGame(): Game
-  +createProgressiveGame(): Game
-  +createBerlineseGame(): Game
+  +createFromBoard(board, player, rights, enPassant): Game
 }
 
 Game --> GameEngine
-Game --> GameHistory
-GameHistory --> GameState
+Game --> GameState
 GameState --> Board
+GameState --> GameExtraState
 Board --> Piece
 Piece --> PieceKind
-Piece --> MoveStrategy
-ChessGameEngine --> TurnManager
-ChessGameEngine --> WinCondition
+Piece --> MoveBehaviour
+GameEngineImpl --> TurnManager
+GameEngineImpl --> WinCondition
 ChessGameFactory ..> Game : creates
 ChessPieceFactory ..> Piece : creates
 

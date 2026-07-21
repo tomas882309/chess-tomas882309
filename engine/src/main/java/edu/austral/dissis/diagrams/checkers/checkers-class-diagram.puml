@@ -9,26 +9,28 @@ interface TurnManager {
   +nextPlayer(color, state): Color
 }
 interface WinCondition {
-  +evaluate(state, move): GameStatus
+  +evaluate(state): GameStatus
 }
-interface MoveStrategy {
+interface MoveBehaviour {
   +isValidMove(move, piece, state): boolean
 }
 interface PieceKind {
   +pieceId(): String
 }
+interface GameExtraState {
+  +update(move, state): GameExtraState
+}
 
 class Game {
-  +executeMove(move): MoveResult
-  +undo(): MoveResult
-  +redo(): MoveResult
+  +executeMove(move): GameResult
+  +undo(): Game
+  +redo(): Game
 }
-class GameHistory
 class GameState {
   +board: Board
   +currentPlayer: Color
   +status: GameStatus
-  +extra: GameExtra
+  +extraState: GameExtraState
 }
 class Board {
   +pieces: Map<Position, Piece>
@@ -36,44 +38,46 @@ class Board {
 class Piece {
   +color: Color
   +type: PieceKind
-  +moveStrategy: MoveStrategy
+  +moveBehaviour: MoveBehaviour
 }
 
-package "model/pieces" {
-  class CheckersMan implements PieceKind
-  class CheckersKing implements PieceKind
+package "checkers/model/pieces" {
+  class Man implements PieceKind
+  class King implements PieceKind
 }
 
-class CheckersExtra {
-  +multiJumpPosition: Optional<Position>
-  +isMultiJump(): boolean
+class MultiCaptureExtraState implements GameExtraState {
+  +lastCapturingPiece: Optional<Position>
 }
+
 class CheckersPieceFactory {
   +man(color): Piece
   +king(color): Piece
 }
 class CheckersWinCondition implements WinCondition
-class StandardTurnManager implements TurnManager
-class CheckersManMoveStrategy implements MoveStrategy
-class CheckersKingMoveStrategy implements MoveStrategy
-class CheckersGameEngine implements GameEngine {
-  -moveValidator: CheckersMoveValidator
+class CheckersTurnManager implements TurnManager
+class ManMoveBehaviour implements MoveBehaviour
+class KingMoveBehaviour implements MoveBehaviour
+class GameEngineImpl implements GameEngine {
+  -moveValidator: MoveValidator
   -winCondition: WinCondition
   -turnManager: TurnManager
+  -boardUpdater: BoardUpdater
 }
 class CheckersGameFactory {
   +createStandardGame(): Game
+  +createFromBoard(board, player): Game
 }
 
 Game --> GameEngine
-Game --> GameHistory
-GameHistory --> GameState
+Game --> GameState
 GameState --> Board
+GameState --> GameExtraState
 Board --> Piece
 Piece --> PieceKind
-Piece --> MoveStrategy
-CheckersGameEngine --> TurnManager
-CheckersGameEngine --> WinCondition
+Piece --> MoveBehaviour
+GameEngineImpl --> TurnManager
+GameEngineImpl --> WinCondition
 CheckersGameFactory ..> Game : creates
 CheckersPieceFactory ..> Piece : creates
 

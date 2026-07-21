@@ -1,32 +1,32 @@
 @startuml checkers-sequence-diagram
 
 actor Client
-participant GameServerState
 participant Game
-participant CheckersGameEngine
-participant CheckersMoveValidator
-participant CheckersBoardUpdater
+participant GameEngineImpl
+participant CompositeValidator
+participant BoardUpdater
 
-Client -> GameServerState : MovePayload(fromRow, fromCol, toRow, toCol)
-GameServerState -> Game : executeMove(move)
-Game -> CheckersGameEngine : executeMove(move, state)
+Client -> Game : executeMove(move)
+Game -> GameEngineImpl : executeMove(move, state)
 
-CheckersGameEngine -> CheckersMoveValidator : findViolation(move, state)
-note right : valida turno, dirección,\ncaptura obligatoria,\nmulti-jump
-CheckersMoveValidator --> CheckersGameEngine : Optional.empty()
+GameEngineImpl -> CompositeValidator : findViolation(move, state)
+note right : PieceExists, CorrectTurn, InBounds,\nPieceMove, MultiCaptureOnly,\nMandatoryCapture
+CompositeValidator --> GameEngineImpl : Optional.empty()
 
-CheckersGameEngine -> CheckersBoardUpdater : apply(move, board, player)
-CheckersBoardUpdater --> CheckersGameEngine : newBoard
+GameEngineImpl -> BoardUpdater : apply(move, state)
+note right : CaptureEffect,\nPromotionEffect
+BoardUpdater --> GameEngineImpl : newBoard
 
-alt captura y puede seguir saltando
-  CheckersGameEngine --> Game : MoveResult.Success\n(mismo jugador, CheckersExtra.multiJump)
-  Game --> GameServerState : MoveResult.Success
-  GameServerState -> Client : broadcast GameStatePayload
-  Client -> GameServerState : MovePayload (segundo salto)
-else fin de turno normal
-  CheckersGameEngine --> Game : MoveResult.Success\n(jugador alternado, CheckersExtra.none)
-  Game --> GameServerState : MoveResult.Success
-  GameServerState -> Client : broadcast GameStatePayload
+GameEngineImpl -> GameEngineImpl : buildNextState(move, state, newBoard)
+note right : extraState.update() primero\n→ CheckersTurnManager lee\nMultiCaptureExtraState\n→ mismo jugador si puede\nseguir capturando
+
+alt puede seguir capturando
+  GameEngineImpl --> Game : MoveResult.Success(mismoJugador)
+  Game --> Client : GameResult.Moved(newGame)
+  Client -> Game : executeMove(segundoSalto)
+else fin de turno
+  GameEngineImpl --> Game : MoveResult.Success(jugadorAlternado)
+  Game --> Client : GameResult.Moved(newGame)
 end
 
 @enduml
