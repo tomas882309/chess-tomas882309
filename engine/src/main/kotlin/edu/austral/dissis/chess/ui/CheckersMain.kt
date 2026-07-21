@@ -9,5 +9,3 @@ fun main() {
     GameApplication.title = "Checkers"
     Application.launch(GameApplication::class.java)
 }
-
-/* capa blanca (tablero y pieza nueva) y extinction (wincondition)*/
