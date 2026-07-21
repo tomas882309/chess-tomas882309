@@ -29,7 +29,7 @@ fun main() {
 class ServerApplication : Application() {
     private val imageResolver = CachedImageResolver(DefaultImageResolver())
     private val serializer = GameStateSerializer()
-    private val adapter = GameAdapter(CapablancaGameFactory.createStandardGame())
+    private val adapter = GameAdapter(ChessGameFactory.createStandardGame())
     private var server: Server? = null
     private var blackClientId: String? = null
 

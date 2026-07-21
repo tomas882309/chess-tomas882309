@@ -5,7 +5,7 @@ import edu.austral.dissis.chess.factory.ExtinctionGameFactory
 import javafx.application.Application
 
 fun main() {
-    GameApplication.gameFactory = { ExtinctionGameFactory.createStandardGame() }
+    GameApplication.gameFactory = { ChessGameFactory.createStandardGame() }
     GameApplication.title = "Chess"
     Application.launch(GameApplication::class.java)
 }
