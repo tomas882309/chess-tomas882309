@@ -7,7 +7,7 @@ import edu.austral.dissis.checkers.rules.move.MandatoryCaptureValidator;
 import edu.austral.dissis.checkers.rules.move.MultiCaptureOnlyValidator;
 import edu.austral.dissis.checkers.rules.turn.CheckersTurnManager;
 import edu.austral.dissis.checkers.rules.win.CheckersWinCondition;
-import edu.austral.dissis.chess.rules.move.BehaviourValidator;
+import edu.austral.dissis.common.rules.move.BehaviourValidator;
 import edu.austral.dissis.common.game.Game;
 import edu.austral.dissis.common.game.GameEngineImpl;
 import edu.austral.dissis.common.model.*;

@@ -1,8 +1,7 @@
-package edu.austral.dissis.chess.rules.move;
+package edu.austral.dissis.common.rules.move;
 
 import edu.austral.dissis.common.model.GameState;
 import edu.austral.dissis.common.model.Move;
-import edu.austral.dissis.common.rules.move.MoveValidator;
 
 import java.util.Optional;
 

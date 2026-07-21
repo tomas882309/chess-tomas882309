@@ -8,7 +8,7 @@ import edu.austral.dissis.chess.rules.board.EnPassantBoardEffect;
 import edu.austral.dissis.chess.rules.board.PromotionBoardEffect;
 import edu.austral.dissis.chess.rules.move.CastlingValidator;
 import edu.austral.dissis.chess.rules.move.KingInCheckValidator;
-import edu.austral.dissis.chess.rules.move.BehaviourValidator;
+import edu.austral.dissis.common.rules.move.BehaviourValidator;
 import edu.austral.dissis.chess.rules.win.CheckmateWinCondition;
 import edu.austral.dissis.common.game.Game;
 import edu.austral.dissis.common.game.GameEngine;
