@@ -56,7 +56,7 @@ public class ChessGameFactory {
         return new GameEngineImpl(validator, winCondition, turnManager, updater);
     }
 
-    private static Board buildInitialBoard() {
+    public static Board buildInitialBoard() {
         Map<Position, Piece> pieces = new HashMap<>();
         placeBackRank(pieces, Color.WHITE, 0);
         placePawns(pieces, Color.WHITE, 1);
