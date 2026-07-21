@@ -1,4 +1,4 @@
-package edu.austral.dissis.extinction.rules;
+package edu.austral.dissis.chess.rules.win;
 
 import edu.austral.dissis.common.model.*;
 import edu.austral.dissis.common.rules.win.WinCondition;
