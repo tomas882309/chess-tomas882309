@@ -1,14 +1,14 @@
 package edu.austral.dissis.common.model;
 
-import edu.austral.dissis.common.rules.MoveStrategy;
+import edu.austral.dissis.common.behaviour.MoveBehaviour;
 
-public record Piece(Color color, PieceKind type, MoveStrategy moveStrategy) {
+public record Piece(String id, Color color, PieceKind type, MoveBehaviour moveBehaviour) {
 
-  public boolean isColor(Color expected) {
-    return color == expected;
-  }
+    public boolean isColor (Color expected) {
+        return color == expected;
+    }
 
-  public boolean isType(PieceKind expected) {
-    return type.equals(expected);
-  }
+    public boolean isType (PieceKind expected){
+        return type.equals(expected);
+    }
 }

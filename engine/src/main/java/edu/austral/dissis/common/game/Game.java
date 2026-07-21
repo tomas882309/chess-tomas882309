@@ -4,47 +4,46 @@ import edu.austral.dissis.common.model.GameState;
 import edu.austral.dissis.common.model.Move;
 import edu.austral.dissis.common.model.MoveResult;
 
-public class Game {
+import java.util.ArrayList;
+import java.util.List;
 
-  private final GameEngine engine;
-  private final GameHistory history;
+public record Game(GameEngine engine, GameState current, List<GameState> past, List<GameState> future) {
 
-  public Game(GameEngine engine, GameState initialState) {
-    this.engine = engine;
-    this.history = new GameHistory(initialState);
-  }
-
-  public MoveResult executeMove(Move move) {
-    MoveResult result = engine.executeMove(move, history.current());
-    if (result instanceof MoveResult.Success s) {
-      history.commit(s.newState());
+    public GameResult executeMove(Move move) {
+        MoveResult result = engine.executeMove(move, current);
+        return switch (result) {
+            case MoveResult.Success s -> new GameResult.Moved(new Game(engine, s.newState(), addTo(past, current), List.of()));
+            case MoveResult.Failure f -> new GameResult.Invalid(f.reason());
+        };
     }
-    return result;
-  }
 
-  public MoveResult undo() {
-    return history
-        .undo()
-        .map(state -> (MoveResult) new MoveResult.Success(state))
-        .orElse(new MoveResult.Failure("No hay movimientos para deshacer"));
-  }
+    public Game undo() {
+        if (!canUndo()) return this;
+        return new Game(engine, last(past), removeLast(past), addTo(future, current));
+    }
 
-  public MoveResult redo() {
-    return history
-        .redo()
-        .map(state -> (MoveResult) new MoveResult.Success(state))
-        .orElse(new MoveResult.Failure("No hay movimientos para rehacer"));
-  }
+    public Game redo() {
+        if (!canRedo()) return this;
+        return new Game(engine, last(future), addTo(past, current), removeLast(future));
+    }
 
-  public GameState currentState() {
-    return history.current();
-  }
+    public boolean canUndo() { return !past.isEmpty(); }
+    public boolean canRedo() { return !future.isEmpty(); }
 
-  public boolean canUndo() {
-    return history.canUndo();
-  }
+    private List<GameState> addTo(List<GameState> list, GameState state) {
+        List<GameState> newList = new ArrayList<>(list);
+        newList.add(state);
+        return List.copyOf(newList);
+    }
 
-  public boolean canRedo() {
-    return history.canRedo();
-  }
+    private List<GameState> removeLast(List<GameState> list) {
+        List<GameState> newList = new ArrayList<>(list);
+        newList.removeLast();
+        return List.copyOf(newList);
+    }
+
+    private GameState last(List<GameState> list) {
+        return list.get(list.size() - 1);
+    }
+
 }

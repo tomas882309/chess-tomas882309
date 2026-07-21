@@ -5,5 +5,5 @@ import edu.austral.dissis.common.model.Move;
 import edu.austral.dissis.common.model.MoveResult;
 
 public interface GameEngine {
-  MoveResult executeMove(Move move, GameState state);
+    MoveResult executeMove(Move move, GameState state);
 }
