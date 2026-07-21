@@ -1,7 +1,7 @@
 package edu.austral.dissis.chess.ui
 
 import com.fasterxml.jackson.core.type.TypeReference
-import edu.austral.dissis.chess.factory.CapablancaGameFactory
+import edu.austral.dissis.checkers.factory.CheckersGameFactory
 import edu.austral.dissis.chess.factory.ChessGameFactory
 import edu.austral.dissis.chess.gui.CachedImageResolver
 import edu.austral.dissis.chess.gui.DefaultImageResolver
