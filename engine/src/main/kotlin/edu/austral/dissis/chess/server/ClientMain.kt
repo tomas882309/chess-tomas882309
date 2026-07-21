@@ -34,13 +34,7 @@ class ClientApplication : Application() {
     private val imageResolver = CachedImageResolver(DefaultImageResolver())
     private var client: Client? = null
     private var role: String = "SPECTATOR"
-    private var currentGuiState: GuiGameState = GuiGameState.Playing(
-        boardSize = BoardSize(8, 8),
-        pieces = emptyList(),
-        currentPlayer = PlayerColor.WHITE,
-        canUndo = false,
-        canRedo = false
-    )
+    private var currentGuiState: GuiGameState = GuiGameState.InvalidMove("Conectando...")
 
     override fun start(stage: Stage) {
         stage.title = "Chess - Cliente"

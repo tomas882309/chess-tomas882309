@@ -1,6 +1,7 @@
 package edu.austral.dissis.chess.ui
 
 import com.fasterxml.jackson.core.type.TypeReference
+import edu.austral.dissis.chess.factory.CapablancaGameFactory
 import edu.austral.dissis.chess.factory.ChessGameFactory
 import edu.austral.dissis.chess.gui.CachedImageResolver
 import edu.austral.dissis.chess.gui.DefaultImageResolver
@@ -28,7 +29,7 @@ fun main() {
 class ServerApplication : Application() {
     private val imageResolver = CachedImageResolver(DefaultImageResolver())
     private val serializer = GameStateSerializer()
-    private val adapter = GameAdapter(ChessGameFactory.createStandardGame())
+    private val adapter = GameAdapter(CapablancaGameFactory.createStandardGame())
     private var server: Server? = null
     private var blackClientId: String? = null
 
